@@ -4,22 +4,25 @@
 
 :root {
     /* Core palette */
-    --bg: #000000;
-    --surface: #0a0a0a;
-    --surface-raised: #111111;
-    --border: #262626;
-    --border-hover: #404040;
+    --bg: #090909;
+    --surface: #101010;
+    --surface-raised: #151515;
+    --border: #222222;
+    --border-hover: #3a3a3a;
     --text: #ffffff;
     --text-muted: #a3a3a3;
-    --text-faint: #6b6b6b;
+    --text-faint: #525252;
+    --accent: #00f0ff; /* Blueprint Cyan */
+    --accent-muted: rgba(0, 240, 255, 0.08);
+    --navbar-bg-scrolled: rgba(9, 9, 9, 0.85);
 
     /* Layout & globals */
     --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     --font-mono: 'Fira Code', monospace;
-    --radius-lg: 24px;
-    --radius-md: 16px;
-    --radius-sm: 10px;
-    --radius-pill: 100px;
+    --radius-lg: 4px;
+    --radius-md: 4px;
+    --radius-sm: 2px;
+    --radius-pill: 4px;
     --ease: cubic-bezier(0.16, 1, 0.3, 1);
     --transition: all 0.3s var(--ease);
     --max-width: 1180px;
@@ -27,14 +30,17 @@
 
 /* Light Mode Override */
 body.light-mode {
-    --bg: #ffffff;
-    --surface: #f7f7f7;
-    --surface-raised: #ffffff;
-    --border: #e5e5e5;
-    --border-hover: #cccccc;
-    --text: #000000;
-    --text-muted: #525252;
-    --text-faint: #8a8a8a;
+    --bg: #f5f5f5;
+    --surface: #ffffff;
+    --surface-raised: #fafafa;
+    --border: #dcdcdc;
+    --border-hover: #b0b0b0;
+    --text: #111111;
+    --text-muted: #555555;
+    --text-faint: #999999;
+    --accent: #0088cc; /* Blueprint Blue */
+    --accent-muted: rgba(0, 136, 204, 0.08);
+    --navbar-bg-scrolled: rgba(245, 245, 245, 0.85);
 }
 
 /* Base Styles */
@@ -51,6 +57,8 @@ body {
     margin: 0;
     padding: 0;
     background-color: var(--bg);
+    background-image: radial-gradient(var(--border) 1px, transparent 1px);
+    background-size: 24px 24px;
     color: var(--text);
     line-height: 1.6;
     overflow-x: hidden;
@@ -68,91 +76,124 @@ header {
     z-index: 1000;
 }
 
-/* Estado inicial (arriba del todo): navbar amplia, sin fondo */
+/* Estado inicial: barra superior completa y translúcida */
 .navbar {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
+    height: 64px;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    padding: 1.5rem 2rem;
-    background: transparent;
+    padding: 0 8%;
+    background: rgba(9, 9, 9, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
     transition: var(--transition);
+    z-index: 1000;
+    box-sizing: border-box;
 }
 
-/* Estado al hacer scroll hacia abajo: navbar se ENCOGE (más compacta) */
+body.light-mode .navbar {
+    background: rgba(245, 245, 245, 0.85);
+}
+
+/* Reducción sutil al hacer scroll */
 .navbar.scrolled {
-    padding: 0.6rem 2rem;
-    background: rgba(0, 0, 0, 0.75);
+    height: 54px;
+    background: rgba(9, 9, 9, 0.95);
+    border-bottom-color: var(--border-hover);
 }
 
 body.light-mode .navbar.scrolled {
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(245, 245, 245, 0.95);
 }
 
+/* Logo Técnico */
+.navbar-logo {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 1.5px;
+    user-select: none;
+}
+
+/* Enlaces */
 .navbar-links {
     display: flex;
-    justify-content: center;
     align-items: center;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    padding: 0.5rem 1.5rem;
-    border-radius: var(--radius-pill);
-    transition: var(--transition);
-}
-
-.navbar.scrolled .navbar-links {
-    padding: 0.3rem 1rem;
+    gap: 1.5rem;
+    margin-left: auto;
+    margin-right: 2rem;
 }
 
 .navbar a {
+    font-family: var(--font-mono);
     color: var(--text-muted);
     text-decoration: none;
-    margin: 0 1.25rem;
-    font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
+    font-weight: 500;
     transition: var(--transition);
+    padding: 0.4rem 0.25rem;
     position: relative;
-    padding: 0.25rem 0;
 }
 
-.navbar.scrolled a {
-    font-size: 0.8rem;
-    margin: 0 0.9rem;
+.navbar a::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--accent);
+    transition: var(--transition);
 }
 
 .navbar a:hover {
     color: var(--text);
 }
 
-.navbar.scrolled #theme-toggle {
-    width: 34px;
-    height: 34px;
-    font-size: 0.9rem;
+.navbar a:hover::after {
+    width: 100%;
 }
 
+/* Botón de Tema */
 #theme-toggle {
-    position: absolute;
-    right: 2rem;
-    font-size: 1.1rem;
+    font-size: 1rem;
     cursor: pointer;
     color: var(--text);
     background: var(--surface);
     border: 1px solid var(--border);
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-pill);
     display: flex;
     align-items: center;
     justify-content: center;
     transition: var(--transition);
+    padding: 0;
+    outline: none;
+    position: static;
 }
 
 #theme-toggle:hover {
-    border-color: var(--text);
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-muted);
     transform: scale(1.05);
+}
+
+.navbar.scrolled a {
+    font-size: 0.76rem;
+}
+
+.navbar.scrolled #theme-toggle {
+    width: 32px;
+    height: 32px;
+    font-size: 0.9rem;
 }
 
 /* Sections Layout */
@@ -167,16 +208,19 @@ section {
 }
 
 section h2 {
-    font-size: 2.5rem;
-    font-weight: 800;
+    font-family: var(--font-mono);
+    font-size: 1.8rem;
+    font-weight: 700;
     margin-bottom: 0.75rem;
     text-align: center;
     letter-spacing: -0.5px;
     color: var(--text);
+    text-transform: uppercase;
 }
 
 section .subtitle {
-    font-size: 1.05rem;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
     color: var(--text-muted);
     max-width: 600px;
     margin: 0 auto 3rem auto;
@@ -189,6 +233,25 @@ section .subtitle {
     padding-top: 180px;
     min-height: 100vh;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.tech-tag {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--accent);
+    letter-spacing: 1.5px;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border: 1px solid var(--accent-muted);
+    background: var(--accent-muted);
+    border-radius: var(--radius-pill);
+    animation: riseIn 0.8s var(--ease);
 }
 
 .hero-section h1 {
@@ -198,16 +261,30 @@ section .subtitle {
     margin-bottom: 1.5rem;
     letter-spacing: -2px;
     color: var(--text);
-    animation: riseIn 0.8s var(--ease);
+    animation: riseIn 0.8s var(--ease) 0.1s backwards;
 }
 
 .hero-section p {
-    font-size: 1.25rem;
+    font-size: 1.2rem;
     color: var(--text-muted);
     max-width: 620px;
-    margin: 0 auto 2.5rem auto;
+    margin: 0 auto 2rem auto;
     line-height: 1.7;
-    animation: riseIn 0.8s var(--ease) 0.15s backwards;
+    animation: riseIn 0.8s var(--ease) 0.2s backwards;
+}
+
+.scroll-indicator {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-faint);
+    margin-top: 3rem;
+    letter-spacing: 1px;
+    animation: pulse 2s infinite ease-in-out, riseIn 0.8s var(--ease) 0.3s backwards;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
 }
 
 @keyframes riseIn {
@@ -222,36 +299,14 @@ section .subtitle {
 }
 
 /* Skills Section & Chained Carousel */
-.skills-section-tailwind {
+.skills-section {
     min-height: auto;
     padding: 100px 0;
     overflow: hidden;
 }
 
-.skills-section-tailwind h2 {
+.skills-section h2 {
     padding: 0 8%;
-}
-
-.skills-section-tailwind h3 {
-    font-family: var(--font-mono);
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: var(--text-faint);
-    margin: 2.5rem auto 1rem auto;
-    font-weight: 500;
-    text-align: center;
-    align-self: center;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-}
-
-.skills-section-tailwind h3::before {
-    content: "//";
-    color: var(--border-hover);
 }
 
 /* Logos Container & Masking */
@@ -289,23 +344,23 @@ section .subtitle {
    para garantizar cobertura completa en pantallas grandes sin que se note el corte.
    El desplazamiento debe coincidir exactamente con 1/N del ancho total (N = nº de copias)
    para que el loop sea perfectamente continuo e infinito. */
-.skills-track-tailwind {
+.skills-track {
     display: flex;
     width: max-content;
     gap: 1rem;
     padding-right: 1rem;
 }
 
-.skills-track-tailwind.left {
+.skills-track.left {
     animation: scroll-marquee-left 40s linear infinite;
 }
 
-.skills-track-tailwind.right {
+.skills-track.right {
     animation: scroll-marquee-right 40s linear infinite;
 }
 
 /* Desincronizar la tercera fila (Databases) de la primera (Front-end) */
-.skills-section-tailwind .logos-container:nth-of-type(3) .skills-track-tailwind {
+.skills-section .logos-container:nth-of-type(3) .skills-track {
     animation-delay: -1.5s;
 }
 
@@ -328,23 +383,25 @@ section .subtitle {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-pill);
-    font-weight: 600;
+    font-weight: 500;
     color: var(--text-muted);
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     white-space: nowrap;
     transition: var(--transition);
     user-select: none;
+    font-family: var(--font-mono);
 }
 
 .skill-logo-item i {
-    font-size: 1.25rem;
+    font-size: 1.2rem;
 }
 
 .skill-logo-item:hover {
     background: var(--surface-raised);
-    border-color: var(--text);
+    border-color: var(--accent);
     color: var(--text);
     transform: translateY(-2px);
+    box-shadow: 4px 4px 0px var(--accent-muted);
 }
 
 /* Projects Section */
@@ -372,11 +429,13 @@ section .subtitle {
     position: relative;
     overflow: hidden;
     transition: var(--transition);
+    box-shadow: 4px 4px 0px var(--border);
 }
 
 .project-card:hover {
-    transform: translateY(-6px);
-    border-color: var(--border-hover);
+    transform: translate(-3px, -3px);
+    border-color: var(--accent);
+    box-shadow: 6px 6px 0px var(--accent-muted);
 }
 
 .project-card img {
@@ -387,14 +446,17 @@ section .subtitle {
     margin-bottom: 1.25rem;
     filter: grayscale(100%);
     transition: var(--transition);
+    border: 1px solid var(--border);
 }
 
 .project-card:hover img {
     filter: grayscale(0%);
+    border-color: var(--border-hover);
 }
 
 .project-card h3 {
-    font-size: 1.3rem;
+    font-family: var(--font-mono);
+    font-size: 1.25rem;
     font-weight: 700;
     color: var(--text);
     margin-top: 0;
@@ -419,20 +481,21 @@ section .subtitle {
 }
 
 .project-card .tag {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-family: var(--font-mono);
     font-weight: 500;
     color: var(--text-muted);
-    background: transparent;
+    background: var(--surface-raised);
     border: 1px solid var(--border);
-    padding: 0.25rem 0.75rem;
+    padding: 0.2rem 0.6rem;
     border-radius: var(--radius-pill);
     transition: var(--transition);
 }
 
-.project-card:hover .tag {
-    border-color: var(--border-hover);
-    color: var(--text);
+.project-card .tag:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-muted);
 }
 
 .project-card .project-buttons {
@@ -454,7 +517,8 @@ section .subtitle {
     border-radius: var(--radius-sm);
     text-decoration: none;
     font-weight: 600;
-    font-size: 0.88rem;
+    font-size: 0.8rem;
+    font-family: var(--font-mono);
     transition: var(--transition);
 }
 
@@ -466,12 +530,16 @@ section .subtitle {
 }
 
 .project-card .project-buttons a:last-child:hover {
-    opacity: 0.85;
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #000000;
     transform: translateY(-1.5px);
 }
 
 .project-card .project-buttons a:first-child:hover {
-    border-color: var(--text);
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-muted);
     transform: translateY(-1.5px);
 }
 
@@ -497,10 +565,17 @@ section .subtitle {
     padding-bottom: 0.5rem;
     transition: var(--transition);
     border-bottom: 1px solid var(--border);
+    font-family: var(--font-mono);
 }
 
 .contact-email-link:hover {
-    border-bottom-color: var(--text);
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+}
+
+.contact-email-container {
+    font-size: 1.2rem;
+    margin-top: 2rem;
 }
 
 /* Footer Section */
@@ -532,7 +607,7 @@ section .subtitle {
     height: 46px;
     background: var(--surface-raised);
     border: 1px solid var(--border);
-    border-radius: 50%;
+    border-radius: var(--radius-pill);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -541,8 +616,9 @@ section .subtitle {
 }
 
 .social-links a:hover {
-    color: var(--text);
-    border-color: var(--text);
+    color: var(--accent);
+    border-color: var(--accent);
+    background: var(--accent-muted);
     transform: translateY(-4px);
 }
 
@@ -559,25 +635,28 @@ section .subtitle {
     }
 
     .navbar {
-        padding: 1rem;
+        padding: 0 6%;
+        height: 60px;
         justify-content: space-between;
     }
 
     .navbar-links {
-        margin: 0 auto;
-        padding: 0.4rem 1rem;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        gap: 1rem;
+        margin-left: auto;
+        margin-right: 1.5rem;
     }
 
     .navbar a {
-        margin: 0 0.75rem;
-        font-size: 0.82rem;
+        font-size: 0.76rem;
     }
 
     #theme-toggle {
-        position: static;
-        width: 38px;
-        height: 38px;
-        font-size: 1rem;
+        width: 32px;
+        height: 32px;
+        font-size: 0.9rem;
     }
 
     .hero-section h1 {
@@ -589,7 +668,7 @@ section .subtitle {
     }
 
     section h2 {
-        font-size: 2rem;
+        font-size: 1.5rem;
     }
 
     .project-grid {
@@ -603,6 +682,19 @@ section .subtitle {
 }
 
 @media (max-width: 480px) {
+    .navbar-logo {
+        display: none;
+    }
+
+    .navbar-links {
+        margin-right: 1rem;
+        gap: 0.75rem;
+    }
+
+    .navbar a {
+        font-size: 0.72rem;
+    }
+
     .hero-section h1 {
         font-size: 2.1rem;
     }
@@ -612,11 +704,7 @@ section .subtitle {
     }
 
     section h2 {
-        font-size: 1.75rem;
-    }
-
-    .navbar-links a {
-        margin: 0 0.5rem;
+        font-size: 1.3rem;
     }
 }
 
